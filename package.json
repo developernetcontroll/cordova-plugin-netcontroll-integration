@@ -8,10 +8,24 @@
       "android"
     ]
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/developernetcontroll/cordova-plugin-netcontroll-integration"
+  },
   "keywords": [
     "ecosystem:cordova",
-    "cordova-android"
+    "cordova-android",
+    "netcontroll",
+    "xmenu",
+    "elgin",
+    "minipdv",
+    "M8",
+    "M10"
   ],
   "author": "Luccas Quintino",
-  "license": "ISC"
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/developernetcontroll/cordova-plugin-netcontroll-integration"
+  },
+  "homepage": "https://github.com/developernetcontroll/cordova-plugin-netcontroll-integration#readme"
 }
