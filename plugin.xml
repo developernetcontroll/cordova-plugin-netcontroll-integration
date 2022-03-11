@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<plugin id="cordova-plugin-netcontroll-integration" version="1.0.13"
+<plugin id="cordova-plugin-netcontroll-integration" version="1.0.6"
     xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -7,6 +7,26 @@
     <js-module name="NetControllCordovaPluginsIntegration" src="www/NetControllCordovaPluginsIntegration.js">
         <clobbers target="cordova.plugins.NetControllCordovaPluginsIntegration" />
     </js-module>
+    <js-module name="ElginM10Terminal" src="www/Elgin/M10Terminal.js">
+        <!-- <clobbers target="window.ElginM10Terminal" /> -->
+        <clobbers target="cordova.plugins.NetControllCordovaPluginsIntegration.ElginM10Terminal" />
+    </js-module>
+
+    <js-module name="CieloLioLocal" src="www/Cielo/LioLocal.js">
+        <!-- <clobbers target="window.ElginM10Terminal" /> -->
+        <clobbers target="cordova.plugins.NetControllCordovaPluginsIntegration.CieloLioLocal" />
+    </js-module>
+
+    <js-module src="www/alice.js" name="alice">
+        <clobbers target="cordova.plugins.NetControllCordovaPluginsIntegration.alice" />
+        <!-- <runs/> -->
+    </js-module>
+    <js-module src="www/bob.js" name="bob">
+        <clobbers target="cordova.plugins.NetControllCordovaPluginsIntegration.bob" />
+        <!-- <runs/> -->
+    </js-module>
+
+
     <dependency id="cordova-plugin-androidx-adapter" version="1.1.3" />
     <platform name="android">
         <config-file parent="/*" target="res/xml/config.xml">
@@ -23,6 +43,10 @@
 
         <!-- executable source code > -->
         <source-file src="src/android/NetControllCordovaPluginsIntegration.java" target-dir="src/cordova-plugin-m8/cordova-plugin-m8" />
+        <source-file src="src/android/Elgin/ElginM10Terminal.java" target-dir="src/cordova-plugin-m8/cordova-plugin-m8" />
+        <source-file src="src/android/Cielo/CieloLioLocal.java"    target-dir="src/cordova-plugin-m8/cordova-plugin-m8" />
+        <!-- <source-file src="src/android/NetControllCordovaPluginsIntegration.java" target-dir="src/cordova/plugin/netcontroll/integration/NetControllCordovaPluginsIntegration" />
+        <source-file src="src/android/Elgin/ElginM10Terminal.java" target-dir="src/cordova-plugin-m8/cordova-plugin-m8" /> -->
 
         <framework src="src/build.gradle" custom="true" type="gradleReference" />
 
@@ -31,6 +55,7 @@
         <resource-file src="src/libs/e1-v1.0.16-release.aar" target="libs/e1-v1.0.16-release.aar" />
 
         <!--
-        <source-file src="src/android/NetControllCordovaPluginsIntegration.java" target-dir="src/cordova/plugin/netcontroll/integration/NetControllCordovaPluginsIntegration" /> -->
+        <source-file src="src/android/NetControllCordovaPluginsIntegration.java" target-dir="src/cordova/plugin/netcontroll/integration/NetControllCordovaPluginsIntegration" />
+         -->
     </platform>
 </plugin>
