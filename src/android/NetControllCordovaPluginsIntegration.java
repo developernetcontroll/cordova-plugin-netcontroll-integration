@@ -23,273 +23,75 @@ import static android.app.Activity.RESULT_OK;
 import java.util.HashMap;
 import java.util.Map;
 
-//Elgin Plugins
-import com.elgin.e1.Impressora.Termica;
-
 import javax.security.auth.callback.Callback;
 
 /**
  * This class echoes a string called from JavaScript.
  */
 public class NetControllCordovaPluginsIntegration extends CordovaPlugin {
-    //Cordova/Java Params
-    private Activity mActivity;
-    private Context mContext;
-    private CordovaWebView webView;
+    //Elgin
+    public ElginM10Terminal elginM10Terminal;
 
-    //Intents CODES
-    private static int REQ_CODE_SELECAOIMAGEM = 1234;
-
-    //CallbacksOnActivityResult
-    private CallbackContext selecionarImagemCallbackContext;
-
-    //cutPaper boolean for resultActivity
-    private boolean cutPaper = false;
+    //Cielo
+    public CieloLioLocal cieloLioLocal;
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
-        this.webView = webView;
-        mActivity = cordova.getActivity();
-        mContext = cordova.getActivity().getApplicationContext();
+    }
 
-        //Initialize printer
-        Termica.setContext(mActivity);
+    private void initializeElginM10Terminal() {
+        if (this.elginM10Terminal == null) {
+            this.elginM10Terminal = new ElginM10Terminal();
+            this.elginM10Terminal.initialize(this.cordova, this.webView);
+        }
+    }
+
+    private void initializeCieloLioLocal() {
+        if (this.cieloLioLocal == null) {
+            this.cieloLioLocal = new CieloLioLocal();
+            this.cieloLioLocal.initialize(this.cordova, this.webView);
+        }
     }
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-        if (action.equals("coolMethod")) {
-            // String message = args.getString(0);
-            // this.coolMethod(message, callbackContext);
-            
-            int arg1 = args.getInt(0);
-            int arg2 = args.getInt(1);
+        try { 
+            String result = "Sem resultado";
+            String[] actionProviderList = action.split("\\.");
+            String provider = actionProviderList[0];
 
-            int result = arg1 + arg2;
-
-            // if (Termica != null) {
-            //     result = result * 2;
-            // }
-
-            callbackContext.success("Result: " + result );
+            switch (provider.toLowerCase()) {
+                case "elgin":
+                    String elginProduct = actionProviderList[1];
+                    switch (elginProduct.toLowerCase()) {
+                        case "m10terminal":
+                            this.initializeElginM10Terminal();
+                            String elginAction = actionProviderList[2];
+                            boolean resultElginExecute = this.elginM10Terminal.execute(elginAction, args, callbackContext);
+                            return resultElginExecute;
+                        default:
+                            break;
+                    }
+                case "cielo":
+                    String cieloProduct = actionProviderList[1];
+                    switch (cieloProduct.toLowerCase()) {
+                        case "liolocal":
+                            this.initializeCieloLioLocal();
+                            String cieloAction = actionProviderList[2];
+                            boolean resultCieloExecute = this.cieloLioLocal.execute(cieloAction, args, callbackContext);
+                            return resultCieloExecute;
+                        default:
+                            break;
+                    }
+                default:
+                    break;
+            }
+            callbackContext.success(result);
             return true;
-        }
-
-        else if(action.equals("AbreConexaoImpressora")){
-            try{
-                JSONObject params = args.getJSONObject(0);
-
-                int tipo = params.getInt("tipo");
-                String modelo = params.getString("modelo");
-                String conexao = params.getString("conexao");
-                int parametro = params.getInt("parametro");
-
-                int result = Termica.AbreConexaoImpressora(tipo, modelo, conexao, parametro);
-
-                callbackContext.success(result);
-            }catch (Exception e){
-                callbackContext.error("AbreConexaoImpressora error: " + e.toString());
-            }
-        }
-
-        else if(action.equals("FechaConexaoImpressora")){
-            try{
-                int result = Termica.FechaConexaoImpressora();
-
-                callbackContext.success(result);
-            } catch (Exception e){
-                callbackContext.error("FechaConexaoImpressora error: " + e.toString());
-            }
-        }
-
-        else if(action.equals("AvancaPapel")){
-            try{
-                JSONObject params = args.getJSONObject(0);
-
-                int linhas = params.getInt("linhas");
-
-                int result = Termica.AvancaPapel(linhas);
-
-                callbackContext.success(result);
-            }catch (Exception e){
-                callbackContext.error("AvancaPapel error: " + e.toString());
-            }
-        }
-
-        else if(action.equals("Corte")){
-            try{
-                JSONObject params = args.getJSONObject(0);
-
-                int avanco = params.getInt("avanco");
-
-                int result = Termica.Corte(avanco);
-
-                callbackContext.success(result);
-            }catch (Exception e){
-                callbackContext.error("Corte error: " + e.toString());
-            }
-        }
-
-       else if(action.equals("ImpressaoTexto")){
-           try{
-                JSONObject params = args.getJSONObject(0);
-
-                String dados = params.getString("dados");
-                int posicao = params.getInt("posicao");
-                int stilo = params.getInt("stilo");
-                int tamanho = params.getInt("tamanho");
-
-                int result = Termica.ImpressaoTexto(dados, posicao, stilo, tamanho);
-
-                callbackContext.success(result);
-           }catch (Exception e){
-               callbackContext.error("ImpressaoTexto error: " + e.toString());
-           }
-           return true;
-       }
-
-        else if(action.equals("ImpressaoCodigoBarras")){
-            try{
-                JSONObject params = args.getJSONObject(0);
-
-                int tipo = params.getInt("tipo");
-                String dados = params.getString("dados");
-                int altura = params.getInt("altura");
-                int largura = params.getInt("largura");
-                int HRI = params.getInt("HRI");
-
-                int result = Termica.ImpressaoCodigoBarras(tipo, dados, altura, largura, HRI);
-
-                callbackContext.success(result);
-            }catch (Exception e){
-                callbackContext.error("ImpressaoCodigoBarras error: " + e.toString());
-            }
-            return true;
-        }
-
-        else if (action.equals("DefinePosicao")){
-            try{
-                JSONObject params = args.getJSONObject(0);
-
-                int posicao = params.getInt("posicao");
-
-                int result = Termica.DefinePosicao(posicao);
-
-                callbackContext.success(result);
-            }catch (Exception e){
-                callbackContext.error("DefinePosicao error: " + e.toString());
-            }
-            return true;
-        }
-
-        else if(action.equals("ImpressaoQRCode")){
-            try{
-                JSONObject params = args.getJSONObject(0);
-
-                String dados = params.getString("dados");
-                int tamanho = params.getInt("tamanho");
-                int nivelCorrecao = params.getInt("nivelCorrecao");
-
-                int result = Termica.ImpressaoQRCode(dados, tamanho, nivelCorrecao);
-
-                callbackContext.success(result) ;
-            }catch (Exception e){
-                callbackContext.error("ImpressaoQRCode error: " + e.toString());
-            }
-            return true;
-        }
-
-        else if(action.equals("ImprimeXMLNFCe")){
-            try{
-                JSONObject params = args.getJSONObject(0);
-
-                String dados = params.getString("dados");
-                int indexcsc = params.getInt("indexcsc");
-                String csc = params.getString("csc");
-                int param = params.getInt("param");
-
-                int result = Termica.ImprimeXMLNFCe(dados, indexcsc, csc, param);
-
-                callbackContext.success(result);
-            }catch (Exception e){
-                callbackContext.error("ImprimeXMLNFCe error: " + e.toString()); 
-            }
-            return true;
-        }
-
-        else if(action.equals("ImprimeXMLSAT")){
-            try{
-                JSONObject params = args.getJSONObject(0);
-
-                String dados = params.getString("dados");
-                int param = params.getInt("param");
-
-                int result = Termica.ImprimeXMLSAT(dados, param);
-
-                callbackContext.success(result);
-
-            }catch (Exception e){
-                callbackContext.error("ImprimeXMLSAT error: " + e.toString());
-            }
-            return true;
-        }
-
-        else if(action.equals("AbreGavetaElgin")){
-            try{
-                int result = Termica.AbreGavetaElgin();
-
-                callbackContext.success(result);
-            } catch (Exception e){
-                callbackContext.error("AbreGavetaElgin error: " + e.toString());
-            }
-        }
-
-        else if(action.equals("StatusImpressora")){
-            try{
-                JSONObject params = args.getJSONObject(0);
-
-                int param = params.getInt("param");
-
-                int result = Termica.StatusImpressora(param);
-
-                callbackContext.success(result);
-            }catch (Exception e){
-                callbackContext.error("StatusImpressora error: " + e.toString());
-            }
-            return true;
-        }
-
-        
-        
-        else if(action.equals("ImprimeImagem")){
-            try{
-                JSONObject params = args.getJSONObject(0);
-
-                if(params.getBoolean("cutPaper")) this.cutPaper = true;
-                else this.cutPaper = false;
-
-                Intent intent = new Intent((Intent.ACTION_PICK));
-                intent.setType("image/*");
-
-                this.selecionarImagemCallbackContext = callbackContext;
-
-                cordova.setActivityResultCallback(this);
-                cordova.getActivity().startActivityForResult(intent, REQ_CODE_SELECAOIMAGEM);
-
-            }catch (Exception e){
-                callbackContext.error("ImprimirImagem error: " + e.toString());
-            }
-            return true;
+        } catch (Exception e) {
+            callbackContext.error("NetControllCordovaPluginsIntegration excute error: " + e.toString());
         }
         return false;
-    }
-
-    private void coolMethod(String message, CallbackContext callbackContext) {
-        if (message != null && message.length() > 0) {
-            callbackContext.success(message);
-        } else {
-            callbackContext.error("Expected one non-empty string argument.");
-        }
     }
 }
