@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-netcontroll-integration",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Plugin cordova de integracao para uso interno (NetControll/ XMenu)",
   "cordova": {
     "id": "cordova-plugin-netcontroll-integration",
