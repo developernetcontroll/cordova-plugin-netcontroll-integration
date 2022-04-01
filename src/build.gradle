@@ -17,7 +17,7 @@ dependencies {
     implementation(name: 'minipdvm8', ext: 'aar')
 
     //Biblioteca de suporte dos códigos de barras utilizada para impressão dos mesmos
-    implementation 'com.google.zxing:core:3.3.2'
+    // implementation 'com.google.zxing:core:3.3.2'
 
     //A lib e1 na versão 1.0.16 depende do suporte do androidx na inicialização
     implementation "androidx.startup:startup-runtime:1.0.0"
